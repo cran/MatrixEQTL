@@ -1,10 +1,15 @@
-importFrom(methods, setRefClass)
-exportPattern("^[[:alpha:]]+")
-exportClasses(
-    "SlicedData" 
+export(
+    "Matrix_eQTL_main",
+    "Matrix_eQTL_engine",
+    "modelLINEAR",
+    "modelANOVA",
+    "modelLINEAR_CROSS",
+    "SlicedData"
 )
-S3method(plot, MatrixEQTL)
-S3method(summary, SlicedData)
+
+exportClasses("SlicedData")
+S3method("plot", "MatrixEQTL")
+S3method("summary", "SlicedData")
 exportMethods(
     "[[",
     "[[<-",
@@ -25,3 +30,12 @@ exportMethods(
     "colSums"
 )
 
+importFrom("graphics",
+              "abline", "legend", "lines",
+              "par", "plot", "points", "title")
+importFrom("methods",
+              "new", "setRefClass")
+importFrom("stats",
+              "complete.cases", "pf", "pt", "qf", "qt")
+importFrom("utils",
+              "tail", "tail.matrix")
