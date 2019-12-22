@@ -34,7 +34,7 @@ importFrom("graphics",
               "abline", "legend", "lines",
               "par", "plot", "points", "title")
 importFrom("methods",
-              "new", "setRefClass")
+              "new", "setRefClass", "is")
 importFrom("stats",
               "complete.cases", "pf", "pt", "qf", "qt")
 importFrom("utils",

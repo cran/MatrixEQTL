@@ -42,7 +42,7 @@ SlicedData = setRefClass("SlicedData",
             return(invisible(.self));
         },
         CreateFromMatrix = function( mat ){
-            stopifnot( class(mat) == "matrix" );
+            stopifnot( is(mat, "matrix") );
             setSliceRaw( 1L ,mat );
             rns = rownames( mat, do.NULL = FALSE);
             rowNameSlices <<- list(rns);
@@ -624,7 +624,7 @@ setMethod(
     f = "colnames<-",
     signature = "SlicedData",
     function(x,value){
-        stopifnot( class(value) == "character" );
+        stopifnot( is.character(value) );
         stopifnot( length(value) == x$nCols() );
         x$columnNames = value;
         return(x);
@@ -634,7 +634,7 @@ setMethod(
     f = "rownames<-",
     signature = "SlicedData",
     function(x,value){
-        stopifnot( class(value) == "character" );
+        stopifnot( is.character(value) );
         stopifnot( length(value) == x$nRows() );
         start = 1;
         newNameSlices = vector("list", x$nSlices());
@@ -888,7 +888,7 @@ setMethod(
             testfun1 <<- list(testfun);
             pvfun1 <<- list(pvfun);
             if(length(filename) > 0){
-                if(class(filename) == "character"){
+                if( is.character(filename) ){
                     fid <<- list(file(
                                     description = filename,
                                     open = "wt",
@@ -1026,7 +1026,7 @@ setMethod(
         },
         start = function(filename, statistic_name, snps, gene, testfun, pvfun){
             # I hope the program stops if it fails to open the file
-            if(class(filename) == "character"){
+            if( is.character(filename) ){
                 fid <<- list(file(
                             description = filename,
                             open = "wt",
@@ -1069,7 +1069,7 @@ setMethod(
                         row.names = FALSE,
                         col.names = FALSE);
         },
-        getResults = function(){
+        getResults = function(...){
             if( length(fid)>0 ){    
                 if(fid[[2]]){
                     close(fid[[1]]);
@@ -1203,10 +1203,18 @@ Matrix_eQTL_main = function(
                         noFDRsaveMemory = FALSE){
     ########################## Basic variable checks ##########################
     {
+        if(!is.null(output_file_name.cis))
+            if(nchar(output_file_name.cis)==0)
+                output_file_name.cis = NULL;
+        
+        if(!is.null(output_file_name))
+            if(nchar(output_file_name)==0)
+                output_file_name = NULL;
+        
         # status("Performing basic checks of the input variables");
-        stopifnot( "SlicedData" %in% class(gene) );
-        stopifnot( any(c("SlicedData","SlicedData.fmt") %in% class(snps)) );
-        stopifnot( "SlicedData" %in% class(cvrt) );
+        stopifnot( is(gene, "SlicedData") );
+        stopifnot( is(snps, "SlicedData") );
+        stopifnot( is(cvrt, "SlicedData") );
         
         # Check dimensions
         if( min(snps$nRows(),snps$nCols()) == 0 )
@@ -1221,24 +1229,24 @@ Matrix_eQTL_main = function(
                 stop("Wrong number of samples in the matrix of covariates");
         }
 
-        stopifnot( class(pvOutputThreshold) == "numeric" );
+        stopifnot( is(pvOutputThreshold, "numeric") );
         stopifnot( length(pvOutputThreshold) == 1 );
         stopifnot( pvOutputThreshold >= 0 );
         stopifnot( pvOutputThreshold <= 1 );
 
-        stopifnot(  class(noFDRsaveMemory) == "logical" );
+        stopifnot( is(noFDRsaveMemory, "logical") );
         stopifnot( length(noFDRsaveMemory) == 1 );
 
         if( pvOutputThreshold > 0 ){
             stopifnot( !((length(output_file_name) == 0) && noFDRsaveMemory) );
             stopifnot( length(output_file_name) <= 1 );
             if( length(output_file_name) == 1 ){
-                stopifnot(  class(output_file_name) %in% 
-                            c("character","connection") );
+                stopifnot( any( class(output_file_name) %in% 
+                            c("character","connection") ) );
             }
         }
         
-        stopifnot( class(pvOutputThreshold.cis) == "numeric" );
+        stopifnot( is(pvOutputThreshold.cis, "numeric") );
         stopifnot( length(pvOutputThreshold.cis) == 1 );
         stopifnot( pvOutputThreshold.cis >= 0 );
         stopifnot( pvOutputThreshold.cis <= 1 );
@@ -1247,7 +1255,7 @@ Matrix_eQTL_main = function(
                     (pvOutputThreshold <= pvOutputThreshold.cis));
         stopifnot( (pvOutputThreshold > 0) | (pvOutputThreshold.cis > 0) );
 
-        stopifnot( class(useModel) == class(modelLINEAR) );
+        stopifnot( is(useModel, class(modelLINEAR)) );
         stopifnot( length(useModel) == 1 );
         stopifnot( useModel %in% c(modelLINEAR, modelANOVA, modelLINEAR_CROSS));
         if( useModel %in%  c(modelLINEAR, modelLINEAR_CROSS) ){
@@ -1272,44 +1280,44 @@ Matrix_eQTL_main = function(
             }
         }
         
-        stopifnot(  class(verbose) == "logical" );
+        stopifnot( is(verbose, "logical") );
         stopifnot( length(verbose) == 1 );
 
-        stopifnot(  class(min.pv.by.genesnp) == "logical" );
+        stopifnot( is(min.pv.by.genesnp, "logical") );
         stopifnot( length(min.pv.by.genesnp) == 1 );
     
         if( pvOutputThreshold.cis > 0 ){
             stopifnot( (length(output_file_name.cis) > 0) || !noFDRsaveMemory );
             stopifnot( length(output_file_name.cis) <= 1 );
             if( length(output_file_name.cis) == 1 ){
-                stopifnot( class(output_file_name.cis) %in%
-                            c("character","connection") );
+                stopifnot( any( class(output_file_name.cis) %in%
+                            c("character","connection") ) );
             }
 
-            stopifnot( class(snpspos) == "data.frame" );
+            stopifnot( is(snpspos, "data.frame") );
             stopifnot( ncol(snpspos) == 3 );
             stopifnot( nrow(snpspos) > 0 );
-            stopifnot( class(snpspos[1,3]) %in% c("integer", "numeric") );
+            stopifnot( is.numeric(snpspos[[3]]) );
             stopifnot( !any(is.na(snpspos[,3])) );
-            stopifnot( class(genepos) == "data.frame" );
+            stopifnot( is(genepos, "data.frame") );
             stopifnot( ncol(genepos) == 4 );
             stopifnot( nrow(genepos) > 0 );
-            stopifnot( class(genepos[1,3]) %in% c("integer", "numeric") );
-            stopifnot( class(genepos[1,4]) %in% c("integer", "numeric") );
-            stopifnot( !any(is.na(genepos[,3])) );
-            stopifnot( !any(is.na(genepos[,4])) );
+            stopifnot( is.numeric(genepos[[3]]) );
+            stopifnot( is.numeric(genepos[[4]]) );
+            stopifnot( !any(is.na(genepos[[3]])) );
+            stopifnot( !any(is.na(genepos[[4]])) );
             stopifnot( nzchar(output_file_name.cis) );
         }
         
         if( pvOutputThreshold > 0 )
             stopifnot( nzchar(output_file_name) );
         
-        stopifnot( class(errorCovariance) %in% c("numeric", "matrix") );
+        stopifnot( is.numeric(errorCovariance) );
         errorCovariance = as.matrix(errorCovariance);
-        if(length(errorCovariance)>0){
+        if( length(errorCovariance) > 0 ){
             if( nrow(errorCovariance) != ncol(errorCovariance) ){
                 stop("The covariance matrix is not square");
-            }    
+            }
             if( nrow(errorCovariance) != snps$nCols() ){
                 stop("The covariance matrix size",
                     " does not match the number of samples");
@@ -1353,7 +1361,8 @@ Matrix_eQTL_main = function(
                 # gc();
                 newTime = proc.time()[3];
                 if(lastTime != 0){
-                    message("Task finished in ", newTime-lastTime, " seconds");
+                    message("Task finished in ", round(newTime-lastTime,3),
+                            " seconds");
                 }
                 message(text);
                 lastTime <<- newTime;
@@ -1392,23 +1401,24 @@ Matrix_eQTL_main = function(
         snps_names = rownames(snps);
         
         # gene range, set: left<right
-        if( any(genepos[,3] > genepos[,4]) ){
-            temp3 = genepos[,3];
-            temp4 = genepos[,4];
-            genepos[,3] = pmin(temp3,temp4);
-            genepos[,4] = pmax(temp3,temp4);
+        if( any(genepos[[3]] > genepos[[4]]) ){
+            temp3 = genepos[[3]];
+            temp4 = genepos[[4]];
+            genepos[[3]] = pmin(temp3, temp4);
+            genepos[[4]] = pmax(temp3, temp4);
             rm(temp3, temp4);
         }
         
         # match with the location data
-        genematch = match(gene_names, genepos[ ,1], nomatch = 0L);
+        genematch = match(gene_names, genepos[[1]], nomatch = 0L);
         usedgene = matrix(FALSE, nrow(genepos), 1); 
         # genes in "genepos" that are matching  "gene_names"
         usedgene[ genematch ] = TRUE;
         if( max(genematch) == 0 ){
             stop("Gene names do not match those in the gene location file.");
         }
-        message(sum(genematch>0), "of", length(gene_names), " genes matched");
+        message(sum(genematch>0), " of ", length(gene_names), 
+                " genes matched");
         
         
         snpsmatch = match( snps_names, snpspos[ ,1],  nomatch = 0L);
@@ -1417,28 +1427,29 @@ Matrix_eQTL_main = function(
         if( max(snpsmatch) == 0 ){
             stop("SNP names do not match those in the SNP location file.");
         }
-        message( sum(snpsmatch>0), "of", length(snps_names), " SNPs matched\n");
+        message(sum(snpsmatch>0), " of ", length(snps_names), 
+                " SNPs matched\n");
         
         # list used chr names
         chrNames = unique(c( 
-                    as.character(unique(snpspos[usedsnps,2])), 
-                    as.character(unique(genepos[usedgene,2]))));
+                    as.character(unique(snpspos[[2]][usedsnps])), 
+                    as.character(unique(genepos[[2]][usedgene]))));
         chrNames = chrNames[ sort.list( 
                                 x = suppressWarnings(as.integer(chrNames)),
                                 method = "radix",
                                 na.last = TRUE)];
         
         # match chr names
-        genechr = match(genepos[,2], chrNames);
-        snpschr = match(snpspos[,2], chrNames);
+        genechr = match(genepos[[2]], chrNames);
+        snpschr = match(snpspos[[2]], chrNames);
         
         # max length of a chromosome
-        chrMax = max(snpspos[usedsnps, 3], genepos[usedgene, 4], na.rm = TRUE) + 
+        chrMax = max(snpspos[[3]][usedsnps], genepos[[4]][usedgene], na.rm = TRUE) + 
                     cisDist;
         
         # Single number location for all rows in "genepos" and "snpspos"
-        genepos2 = as.matrix(genepos[,3:4 , drop = FALSE] + (genechr-1)*chrMax);
-        snpspos2 = as.matrix(snpspos[,3   , drop = FALSE] + (snpschr-1)*chrMax);
+        genepos2 = as.matrix(genepos[3:4]) + (genechr-1)*chrMax;
+        snpspos2 = as.matrix(snpspos[[3]]) + (snpschr-1)*chrMax;
         
         # the final location arrays;
         snps_pos = matrix(0, length(snps_names), 1);
@@ -1455,14 +1466,14 @@ Matrix_eQTL_main = function(
         rm(chrNames, chrMax);
 
         if( is.unsorted(snps_pos) ){
-            status("Reordering SNPs\n");
+            status("Reordering SNPs");
             ordr = sort.list(snps_pos);
             snps$RowReorder(ordr);
             snps_pos = snps_pos[ordr, , drop = FALSE];
             rm(ordr);
         }
         if( is.unsorted(rowSums(gene_pos)) ){
-            status("Reordering genes\n");
+            status("Reordering genes");
             ordr = sort.list(rowSums(gene_pos));
             gene$RowReorder(ordr);
             gene_pos = gene_pos[ordr, , drop = FALSE];
@@ -1489,7 +1500,7 @@ Matrix_eQTL_main = function(
         rm(nr, sc, snps_offset, snps_pos);
     }
     ########################## Covariates processing ##########################
-    {    
+    {
         status("Processing covariates");
         if( useModel == modelLINEAR_CROSS ){
             last.covariate = as.vector(tail( cvrt$getSlice(cvrt$nSlices()), 1));
@@ -1729,8 +1740,13 @@ Matrix_eQTL_main = function(
             # ge.r = sapply(geneloc, function(x)x[nrow(x) , 2] );
             sn.l = sapply(snpsloc, "[", 1 );
             sn.r = sapply(snpsloc, tail, 1 );
-            ge.l = sapply(geneloc, "[", 1, 1 );
-            ge.r = sapply( lapply(geneloc, tail.matrix, 1 ), "[", 2);
+            ge.l = sapply(geneloc, min);
+            ge.r = sapply(geneloc, max);
+            
+            # For find interval
+            ge.l = rev(cummin(rev(ge.l)));
+            ge.r = cummax(ge.r);
+            
             gg.1 = findInterval( sn.l, ge.r + cisDist + 1) + 1;
             gg.2 = findInterval( sn.r, ge.l - cisDist );
             rm(sn.l, sn.r, ge.l, ge.r);
@@ -1844,7 +1860,8 @@ Matrix_eQTL_main = function(
                     xx = unlist(lapply(
                                 X = which(sn.r>sn.l),
                                 FUN = function(x){
-                                    (sn.l[x]:(sn.r[x]-1))*nrow(statistic) + x
+                                    (sn.l[x]:(sn.r[x]-1)) * 
+                                    as.numeric(nrow(statistic)) + x
                                 }));
                     select.cis.raw = xx[ astatistic[xx] >= thresh.cis ];
                     select.cis = arrayInd(select.cis.raw, dim(statistic));
