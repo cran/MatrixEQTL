@@ -1,6 +1,6 @@
-070c86284863e073ea015956a54c5545 *DESCRIPTION
-f908e06d85501ec45a05308ea6baf0af *NAMESPACE
-bed2cafb6c684b53e0518de866778825 *R/Matrix_eQTL_engine.R
+e439ba044fc5f5af413a8edb73a92f6f *DESCRIPTION
+84b550d11ab7c5e12360e4df18170c0c *NAMESPACE
+eee2230c991b7ed100669ea51e2f9d8d *R/Matrix_eQTL_engine.R
 c647eeb87fe68ae403b97d115035e047 *data/Covariates.txt
 5db6e138c6ff342cc5ba786237d4ee19 *data/GE.txt
 239490c0fe4e786304b8595215750342 *data/SNP.txt
@@ -17,12 +17,12 @@ fd40ced46153e64875fef0b8f03c5e11 *demo/e.ANOVA5.r
 21a0c7fa5d514cb3ff67de6571986106 *demo/q.qqplot.r
 bcb6e922bbd44f9d228cb0b56531a3b9 *demo/sample.all.r
 4e548577466c78b9b82b98f463e26d57 *demo/sample.cis.r
-c48720f8a0ebb750812f7ec56803934d *inst/CITATION
+06ad999764c0a66faf9960a067f62147 *inst/CITATION
 0d480c002c4fceeb920c882cf2b43388 *man/Covariates.Rd
 e005914fbb0a714a7a5f921371a710d2 *man/GE.Rd
 0aa2aca41ee5c13138e4a21baa2d33c7 *man/MatrixEQTL-package.Rd
 5fe2ac62caa4aab18373b59615b29da7 *man/MatrixEQTL_cis_code.Rd
-2342653f993f25fef000ffb72267a68d *man/Matrix_eQTL_main.Rd
+7e25894a209c6a7875ef7881ed8de8a4 *man/Matrix_eQTL_main.Rd
 bd01ec7a57ee7b6a14d9bf041a5ab723 *man/SNP.Rd
 27402cd644d43512f38fd486292c1e44 *man/SlicedData-class.Rd
 60476e7c185364f807689a3380793970 *man/figures/QQplot.png
